@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app-deployment
+  labels:
+    app: poridhi-svc1
+spec:
+  replicas: 3  # Number of pod replicas
+  selector:
+    matchLabels:
+      app: poridhi-svc1
+  template:
+    metadata:
+      labels:
+        app: poridhi-svc1
+    spec:
+      containers:
+      - name: poridhi-svc1
+        image: subrotosharma/poridhi-svc1:v1.0.2  # Replace with your Docker image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"  # You can set any environment variables needed
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: poridhi-svc2-svc
+spec:
+  selector:
+    app: poridhi-svc2
+  ports:
+    - protocol: TCP
+      port: 80  # Service port
+      targetPort: 3000  # Node.js app container port
+  type: LoadBalancer  # Expose the app using an external load balancer (use NodePort for local)
